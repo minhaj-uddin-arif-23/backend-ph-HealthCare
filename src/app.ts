@@ -1,4 +1,5 @@
 import express, { Application, Request, Response } from "express";
+import { prisma } from "./app/lib/prisma";
 
 const app: Application = express();
 // Enable URL-encoded form data parsing
@@ -8,9 +9,13 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // Basic route
-app.get("/", (req: Request, res: Response) => {
-  res.send(
-    "Hello, TypeScript + Express! Server is running and ready to good to go.nice go.and go ",
-  );
+app.get("/", async (req: Request, res: Response) => {
+  const specialty = await prisma.specialty.create({
+    data: {
+      title: "Cardiology",
+      description: "Heart related specialty",
+    },
+  });
+  res.status(201).json({ success: 200, result: specialty });
 });
 export default app;
