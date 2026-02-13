@@ -38,6 +38,7 @@
     "dotenv": "^17.2.4",
     "express": "^5.2.1",
     "generate": "^0.14.0",
+    "http-status": "^2.1.0",
     "migrate": "^2.1.0",
     "pg": "^8.18.0",
     "reset": "^0.1.0"

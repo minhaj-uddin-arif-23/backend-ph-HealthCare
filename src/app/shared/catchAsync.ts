@@ -6,11 +6,7 @@ const CatchAsync = (fn: RequestHandler) => {
     try {
       await fn(req, res, next);
     } catch (error: any) {
-      res.status(500).json({
-        success: false,
-        message: "Failed to retrieve ",
-        error: error.message,
-      });
+      next(error);
     }
   };
 };

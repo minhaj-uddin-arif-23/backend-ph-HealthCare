@@ -11,7 +11,7 @@ interface ILoginUser {
   email: string;
   password: string;
 }
-//* create patient (user model) and patient model in one transaction that is one to one relationship
+// create patient (user model) and patient model in one transaction that is one to one relationship
 
 const RegisterPatient = async (payload: IRegisterPatient) => {
   const { name, email, password } = payload;
@@ -28,19 +28,29 @@ const RegisterPatient = async (payload: IRegisterPatient) => {
 
   //TODO : create patient profile in transaction (after sign-up) with user creation(useId)
 
-  const patientProfile = await prisma.$transaction(async (tx) => {
-    const patient = await tx.patient.create({
-      data: {
-        name: payload.name,
-        email: payload.email,
+  try {
+    const patientProfile = await prisma.$transaction(async (tx) => {
+      const patient = await tx.patient.create({
+        data: {
+          name: payload.name,
+          email: payload.email,
 
-        userId: data.user!.id,
+          userId: data.user!.id,
+        },
+      });
+      return patient;
+    });
+
+    return { ...data, patientProfile };
+  } catch (error) {
+    console.log("Transaction error: ", error);
+    await prisma.user.delete({
+      where: {
+        id: data.user!.id,
       },
     });
-    return patient;
-  });
-
-  return { ...data, patientProfile };
+    throw Error;
+  }
 };
 
 const LoginUser = async (payload: ILoginUser) => {
