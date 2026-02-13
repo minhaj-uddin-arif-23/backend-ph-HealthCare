@@ -1,6 +1,10 @@
+// Define Role enum manually if not exported by Prisma client
+
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "./prisma";
+import { Role, Status } from "@prisma/client";
+
 // If your Prisma file is located elsewhere, you can change the path
 // import { Role } from "../../generated/prisma/client/enums"; // Adjust the path as needed
 
@@ -16,12 +20,12 @@ export const auth = betterAuth({
       role: {
         type: "string",
         required: true,
-        defaultValue: "PATIENT", // Default role for new users
+        defaultValue: Role.PATIENT, // Default role for new users
       },
       status: {
         type: "string",
         required: true,
-        defaultValue: "ACTIVE", // Default status for new users
+        defaultValue: Status.ACTIVE, // Default status for new users
       },
       needPasswordChange: {
         type: "boolean",
@@ -38,5 +42,9 @@ export const auth = betterAuth({
         required: false,
       },
     },
+  },
+  trustedOrigins: [process.env.BETTER_AUTH_URL || "http://localhost:5000"], // Add your backend URL here
+  advanced: {
+    disableCSRFCheck: true, // Disable CSRF check for API routes (use with caution)
   },
 });
