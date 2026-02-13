@@ -10,3 +10,8 @@ enum Status {
     BLOCKED
     CANCELLED
 }
+enum Gender {
+    MALE
+    FEMALE
+    OTHER
+}
