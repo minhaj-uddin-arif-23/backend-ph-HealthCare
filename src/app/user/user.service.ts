@@ -7,11 +7,16 @@ import { auth } from "../lib/auth";
 const createDoctor = async (payload: ICreateDoctorPayload) => {
   const speciltys: Specialty[] = [];
   for (const speciltyId of payload.specialties) {
-    const specilty = await prisma.specialty.findUnique({
+    const specilty = await prisma.specialty.findFirst({
       where: {
-        title: speciltyId,
+        title: {
+          equals: speciltyId,
+          mode: "insensitive",
+        },
+        isDeleted: false,
       },
     });
+
     if (!specilty) {
       throw new Error(`Specialty with id ${speciltyId} not found`);
     }
