@@ -1,6 +1,8 @@
 import { Status } from "@prisma/client";
 import { auth } from "../../lib/auth";
 import { prisma } from "../../lib/prisma";
+import AppError from "../../../errorHelpers/AppError";
+import status from "http-status";
 
 interface IRegisterPatient {
   name: string;
@@ -23,7 +25,7 @@ const RegisterPatient = async (payload: IRegisterPatient) => {
     },
   });
   if (!data.user) {
-    throw new Error("User registration failed");
+    throw new AppError(status.BAD_REQUEST, "User registration failed");
   }
 
   //TODO : create patient profile in transaction (after sign-up) with user creation(useId)
@@ -62,10 +64,16 @@ const LoginUser = async (payload: ILoginUser) => {
     },
   });
   if (data.user && data.user.status === Status.BLOCKED) {
-    throw new Error("User is blocked. Please contact support.");
+    throw new AppError(
+      status.NOT_FOUND,
+      "User is blocked. Please contact support.",
+    );
   }
   if (data.user && data.user.status === Status.CANCELLED) {
-    throw new Error("User is cancelled. Please contact support.");
+    throw new AppError(
+      status.FORBIDDEN,
+      "User is cancelled. Please contact support.",
+    );
   }
   return data;
 };

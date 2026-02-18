@@ -6,6 +6,7 @@ import { Prisma } from "@prisma/client";
 import status from "http-status";
 import { EnvVariables } from "../config/env";
 import { formatStack } from "../utils/formatStack";
+import AppError from "../errorHelpers/AppError";
 
 export const errorHandler = (
   err: Error,
@@ -52,8 +53,16 @@ export const errorHandler = (
             location: formatStack(err.stack),
           }
         : null;
+  } else if (err instanceof AppError) {
+    {
+      // our custome error
+      statusCode = err.statusCode;
+      message = err.message;
+      stackInfo = formatStack(err.stack);
+    }
   } else if (err instanceof Error) {
-    /* ---------- NORMAL ERROR ---------- */
+    /* ---------- NORMAL JAVASCRIPT NATIVE ERROR ---------- */
+    statusCode = status.INTERNAL_SERVER_ERROR;
     message = err.message;
     stackInfo = formatStack(err.stack);
   }
@@ -72,5 +81,6 @@ export const errorHandler = (
     message,
     errors,
     stack: EnvVariables.NODE_ENV === "development" ? stackInfo : undefined,
+    err: EnvVariables.NODE_ENV === "development" ? err : undefined,
   });
 };

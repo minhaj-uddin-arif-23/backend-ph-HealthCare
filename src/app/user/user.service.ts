@@ -2,6 +2,8 @@ import { Role, Specialty } from "@prisma/client";
 import { ICreateDoctorPayload } from "./user.interface";
 import { prisma } from "../lib/prisma";
 import { auth } from "../lib/auth";
+import AppError from "../../errorHelpers/AppError";
+import status from "http-status";
 
 // createDoctor with specialties
 const createDoctor = async (payload: ICreateDoctorPayload) => {
@@ -18,7 +20,10 @@ const createDoctor = async (payload: ICreateDoctorPayload) => {
     });
 
     if (!specilty) {
-      throw new Error(`Specialty with id ${speciltyId} not found`);
+      throw new AppError(
+        status.NOT_FOUND,
+        `Specialty with id ${speciltyId} not found`,
+      );
     }
     speciltys.push(specilty);
   }
@@ -29,7 +34,7 @@ const createDoctor = async (payload: ICreateDoctorPayload) => {
     },
   });
   if (existingDoctor) {
-    throw new Error("User already has a doctor profile");
+    throw new AppError(status.CONTINUE, "User already has a doctor profile");
   }
 
   const userData = await auth.api.signUpEmail({
@@ -43,7 +48,10 @@ const createDoctor = async (payload: ICreateDoctorPayload) => {
   });
 
   if (!userData.user) {
-    throw new Error("User registration failed");
+    throw new AppError(
+      status.INTERNAL_SERVER_ERROR,
+      "User registration failed",
+    );
   }
 
   try {
