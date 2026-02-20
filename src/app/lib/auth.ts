@@ -44,8 +44,32 @@ export const auth = betterAuth({
       },
     },
   },
+  session: {
+    expiresIn: 60 * 60 * 60 * 24,
+
+    updateAge: 60 * 60 * 60 * 24,
+
+    cookieCache: {
+      enabled: true,
+      maxAge: 60 * 60 * 60 * 24, // 1 day in milliseconds
+    },
+  },
   trustedOrigins: [EnvVariables.BETTER_AUTH_URL || "http://localhost:5000"], // Add your backend URL here
   advanced: {
     disableCSRFCheck: true, // Disable CSRF check for API routes (use with caution)
   },
 });
+
+// {
+//     "success": false,
+//     "message": "Cookies Max-Age SHOULD NOT be greater than 400 days (34560000 seconds) in duration.",
+//     "errors": null,
+//     "stack": {
+//         "file": "cookies.ts",
+//         "line": 185,
+//         "column": 10
+//     },
+//     "err": {}
+// }
+
+

@@ -4,6 +4,7 @@ import { errorHandler } from "./middleware/errorHandler";
 import { notFoundRoute } from "./middleware/notFoundRoute";
 import AppError from "./errorHelpers/AppError";
 import status from "http-status";
+import cookieParser from "cookie-parser";
 
 const app: Application = express();
 // Enable URL-encoded form data parsing
@@ -11,7 +12,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Middleware to parse JSON bodies
 app.use(express.json());
-
+app.use(cookieParser());
 app.use("/api/v1", IndexRoute);
 // Basic route
 app.get("/", async (req: Request, res: Response) => {
